@@ -1,0 +1,83 @@
+
+name: Publish static routing data
+
+on:
+  push:
+    branches: [main]
+  schedule:
+    - cron: '17 4 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Download and verify geodata
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+
+          BASE="https://github.com/Loyalsoldier/v2ray-rules-dat/releases/latest/download"
+
+          mkdir -p public
+          cp routing.json public/routing.json
+
+          echo '<!doctype html><html><head><meta charset="utf-8"><title>Static Files</title></head><body></body></html>' > public/index.html
+
+          python3 -m json.tool public/routing.json > /dev/null
+
+          for name in geoip geosite; do
+            echo "Downloading $name.dat"
+
+            curl -fsSL --retry 3 \
+              --connect-timeout 15 --max-time 180 \
+              "$BASE/$name.dat" \
+              -o "public/$name.dat"
+
+            curl -fsSL --retry 3 \
+              --connect-timeout 15 --max-time 60 \
+              "$BASE/$name.dat.sha256sum" \
+              -o "$RUNNER_TEMP/$name.sha256sum"
+
+            HASH=$(awk 'NR==1 {print $1}' \
+              "$RUNNER_TEMP/$name.sha256sum")
+
+            [[ "$HASH" =~ ^[0-9a-fA-F]{64}$ ]] || exit 1
+
+            printf '%s  %s\n' "$HASH" "public/$name.dat" \
+              | sha256sum -c --status
+
+            printf '%s\n' "$HASH" \
+              > "public/$name.dat.sha256"
+
+            echo "$name.dat: verified"
+          done
+
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: public
+
+      - name: Deploy Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
