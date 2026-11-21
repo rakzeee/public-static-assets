@@ -1,0 +1,33 @@
+{
+  "Name": "RKZ - Russia Direct",
+  "GlobalProxy": "true",
+  "RemoteDNSType": "DoH",
+  "RemoteDNSDomain": "https://cloudflare-dns.com/dns-query",
+  "RemoteDNSIP": "1.1.1.1",
+  "DomesticDNSType": "DoU",
+  "DomesticDNSIP": "77.88.8.8",
+  "Geoipurl": "https://rakzeee.github.io/public-static-assets/geoip.dat",
+  "Geositeurl": "https://rakzeee.github.io/public-static-assets/geosite.dat"
+  "DirectSites": [
+    "domain:ru",
+    "domain:xn--p1ai",
+    "geosite:category-ru",
+    "domain:2ip.ru"
+  ],
+  "DirectIp": [
+    "geoip:ru",
+    "10.0.0.0/8",
+    "172.16.0.0/12",
+    "192.168.0.0/16",
+    "127.0.0.0/8",
+    "169.254.0.0/16",
+    "fc00::/7",
+    "fe80::/10"
+  ],
+  "ProxySites": [],
+  "ProxyIp": [],
+  "BlockSites": [],
+  "BlockIp": [],
+  "DomainStrategy": "IPIfNonMatch",
+  "FakeDNS": "false"
+}
