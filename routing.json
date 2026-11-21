@@ -7,7 +7,7 @@
   "DomesticDNSType": "DoU",
   "DomesticDNSIP": "77.88.8.8",
   "Geoipurl": "https://rakzeee.github.io/public-static-assets/geoip.dat",
-  "Geositeurl": "https://rakzeee.github.io/public-static-assets/geosite.dat"
+  "Geositeurl": "https://rakzeee.github.io/public-static-assets/geosite.dat",
   "DirectSites": [
     "domain:ru",
     "domain:xn--p1ai",
